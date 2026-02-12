@@ -1,6 +1,6 @@
 {
   "name": "git-push-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "基于自然语言的代码提交MCP工具",
   "main": "index.js",
   "bin": {
