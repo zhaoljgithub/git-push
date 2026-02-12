@@ -1,78 +1,65 @@
-# Git Push MCP - 基于自然语言的代码提交工具
+# Git Push MCP - 灵码Git提交助手
 
-一个智能化的Git操作工具，让你可以通过自然语言指令来自动化处理代码提交流程。
+一个基于自然语言处理的Git操作工具，支持MCP（Model Context Protocol）协议。
 
-## 功能特性
+## 🌟 主要特性
 
-- 🗣️ **自然语言交互** - 使用中文或英文自然语言指令操作Git
-- 🤖 **智能解析** - 自动识别用户意图并执行相应操作
-- 📝 **约定式提交** - 支持Conventional Commits规范
-- ⚡ **自动化流程** - 可配置自动暂存、自动推送等功能
-- 🔧 **多种操作** - 支持提交、添加、状态查询、日志查看等操作
-- 🛡️ **安全可靠** - 完善的错误处理和状态检查
+### 🔧 核心功能
+- **自然语言Git操作**：使用中文指令操作Git（如"提交所有更改"、"推送代码"）
+- **智能命令解析**：自动识别提交类型（feat、fix、docs等）
+- **约定式提交**：支持Conventional Commits规范
+- **自动暂存推送**：可配置自动添加文件和推送功能
 
-## 快速开始
+### 🚀 优化特性
+- **智能仓库检测**：通过检查.git目录判断是否为Git仓库，避免不必要的git init调用
+- **自动仓库初始化**：在非Git目录中自动执行git init
+- **现有仓库保护**：检测到已存在.git目录时跳过初始化，防止破坏现有仓库
+- **统一错误处理**：完善的错误处理和日志记录机制
+- **健壮的状态检查**：改进的仓库状态检测逻辑
 
-### 安装依赖
+## 📦 安装使用
 
+### 全局安装（推荐）
 ```bash
+npm install -g git-push-mcp
+```
+
+### 本地使用
+```bash
+# 克隆项目
+git clone <repository-url>
+cd git-push-mcp
+
+# 安装依赖
 npm install
-```
 
-### 复制配置文件
-
-```bash
-cp .env.example .env
-```
-
-### 基本使用
-
-```bash
-# 启动交互模式
-npm start
-
-# 或者直接运行
+# 运行
 node index.js
 ```
 
-## 使用示例
+## 💡 使用示例
 
-在交互模式下，你可以使用以下自然语言指令：
-
-### 提交代码
-```
-> 提交添加了登录功能
-> commit fix bug in user authentication
-> 把所有修改提交上去
+### 交互模式
+```bash
+git-push-mcp
+# 然后输入自然语言命令
 ```
 
-### 查看状态
-```
-> 查看当前状态
-> status
-> 有什么变化吗
-```
-
-### 添加文件
-```
-> 添加所有文件
-> add package.json
-> 把src目录加到暂存区
+### 命令行模式
+```bash
+git-push-mcp "查看状态"
+git-push-mcp "提交所有更改"
+git-push-mcp "推送代码到远程"
 ```
 
-### 查看历史
-```
-> 查看提交历史
-> log
-> 最近的提交记录
-```
-
-### 分支操作
-```
-> 创建新分支 feature/login
-> 切换到develop分支
-> 查看所有分支
-```
+### 支持的自然语言命令
+- 查看状态 / status
+- 提交所有更改 / commit all
+- 推送代码 / push
+- 查看提交历史 / history
+- 切换分支 / checkout branch
+- 创建新分支 / create branch
+- 查看分支 / branches
 
 ## 配置选项
 
@@ -185,17 +172,38 @@ git-push-mcp/
 2. **新增Git操作**：在 `git-operator.js` 中添加新的方法，并在 `mcp-handler.js` 中注册对应的处理器
 3. **自定义提交类型**：修改 `nlp-processor.js` 中的 `commitTypes` 映射
 
-## 注意事项
+## 🔒 权限要求
 
-- 需要在Git仓库目录中运行
-- 确保有足够的权限执行Git操作
-- 建议先在测试环境中验证配置
-- 自动推送功能需谨慎使用
+- 需要Git仓库的读写权限
+- 需要执行Git命令的权限
+- 建议在已初始化的Git仓库中使用
 
-## 贡献
+## 🐛 故障排除
 
-欢迎提交Issue和Pull Request来改进这个工具！
+### 常见问题
 
-## 许可证
+1. **权限被拒绝**
+   ```bash
+   # 确保有足够的目录权限
+   chmod +x install.js
+   ```
+
+2. **Git命令失败**
+   ```bash
+   # 确保Git已正确安装
+   git --version
+   git config --global user.name "Your Name"
+   git config --global user.email "your.email@example.com"
+   ```
+
+3. **仓库初始化问题**
+   - 工具会自动检测并初始化仓库
+   - 如遇权限问题，请手动初始化：`git init`
+
+## 📄 许可证
 
 MIT License
+
+## 🤝 贡献
+
+欢迎提交Issue和Pull Request来改进这个工具！
