@@ -47,7 +47,12 @@ async function main() {
           result = await handler.getGitStatus();
           break;
         case 'commit_changes':
-          result = await handler.commitChanges(args.message, args.files, args.stageAll);
+          result = await handler.commitChanges(
+            args.message, 
+            args.files, 
+            args.stageAll !== false, 
+            args.autoPush === true
+          );
           break;
         case 'push_changes':
           result = await handler.pushChanges(args.remote, args.branch);
@@ -129,7 +134,7 @@ async function main() {
         },
         {
           name: 'commit_changes',
-          description: '提交Git更改',
+          description: '提交Git更改（支持自动推送）',
           inputSchema: {
             type: 'object',
             properties: {
@@ -148,6 +153,11 @@ async function main() {
                 type: 'boolean',
                 description: '是否添加所有更改的文件',
                 default: true
+              },
+              autoPush: {
+                type: 'boolean',
+                description: '提交后是否自动推送到远程仓库',
+                default: false
               }
             },
             required: ['message']
@@ -166,7 +176,7 @@ async function main() {
               },
               branch: {
                 type: 'string',
-                description: '要推送的分支名称'
+                description: '要推送的分支名称（留空则自动检测当前分支）'
               }
             }
           }
@@ -175,25 +185,13 @@ async function main() {
     };
   });
 
-  // 注册资源和提示处理器（暂不实现）
-  server.setRequestHandler(ListResourcesRequestSchema, async () => ({ resources: [] }));
-  server.setRequestHandler(ReadResourceRequestSchema, async () => ({ contents: [] }));
-  server.setRequestHandler(ListPromptsRequestSchema, async () => ({ prompts: [] }));
-  server.setRequestHandler(GetPromptRequestSchema, async () => ({ messages: [] }));
-
-  try {
-    // 设置传输层并连接
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
-    
-    console.error('Git Push MCP Server running on stdio');
-  } catch (error) {
-    console.error('Server connection error:', error);
-    process.exit(1);
-  }
+  // 启动服务器
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error('Git Push MCP 服务器已启动');
 }
 
-main().catch((error) => {
-  console.error('Server startup error:', error);
+main().catch(error => {
+  console.error('服务器启动失败:', error);
   process.exit(1);
 });
