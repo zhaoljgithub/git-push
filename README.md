@@ -24,6 +24,20 @@
 npm install -g git-push-mcp
 ```
 
+### 配置mcp.json文件：
+```bash
+{
+  "mcpServers": {
+    "git-push-mcp": {
+      "command": "node",
+      "args": [
+        "C:\\Program Files\\nodejs\\node_modules\\git-push-mcp\\mcp-server.js" // 替换为实际路径git-push-mcp本地安装路径
+      ]
+    }
+  }
+}
+```
+
 ### 本地使用
 ```bash
 # 克隆项目
