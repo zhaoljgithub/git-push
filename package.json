@@ -1,0 +1,29 @@
+{
+  "name": "git-push-mcp",
+  "version": "1.0.0",
+  "description": "基于自然语言的代码提交MCP工具",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "mcp",
+    "git",
+    "natural-language",
+    "code-commit"
+  ],
+  "author": "灵码开发团队",
+  "license": "MIT",
+  "dependencies": {
+    "simple-git": "^3.22.0",
+    "winston": "^3.11.0",
+    "dotenv": "^16.3.1",
+    "commander": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0"
+  }
+}
