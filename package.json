@@ -3,27 +3,44 @@
   "version": "1.0.0",
   "description": "基于自然语言的代码提交MCP工具",
   "main": "index.js",
+  "bin": {
+    "git-push-mcp": "./index.js"
+  },
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "jest"
+    "test": "jest",
+    "demo": "node demo.js",
+    "install-service": "node install.js",
+    "uninstall-service": "node install.js --uninstall",
+    "build": "node build.js",
+    "pack": "npm run build && npm pack",
+    "prepublishOnly": "npm test"
   },
   "keywords": [
-    "mcp",
     "git",
+    "mcp",
     "natural-language",
-    "code-commit"
+    "code-commit",
+    "ai-assistant"
   ],
-  "author": "灵码开发团队",
+  "author": "Alibaba Cloud",
   "license": "MIT",
   "dependencies": {
-    "simple-git": "^3.22.0",
-    "winston": "^3.11.0",
-    "dotenv": "^16.3.1",
-    "commander": "^11.1.0"
+    "dotenv": "^16.0.3",
+    "simple-git": "^3.19.1",
+    "winston": "^3.8.2"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2",
-    "jest": "^29.7.0"
+    "jest": "^29.5.0"
+  },
+  "files": [
+    "index.js",
+    "mcp-server.js",
+    "lib/",
+    ".env.example",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
   }
 }
