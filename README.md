@@ -38,6 +38,9 @@ npm install -g git-push-mcp
 }
 ```
 
+### 通义灵码智能体里输入代码提交
+![alt text](image.png)
+
 ### 本地使用
 ```bash
 # 克隆项目
