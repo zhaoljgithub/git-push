@@ -2,6 +2,28 @@
 
 一个基于自然语言处理的Git操作工具，支持MCP（Model Context Protocol）协议。
 
+## 🚀 Git Push MCP 项目开发流程
+
+### 1. 项目结构生成阶段
+基于 `project-rules.md`（始终生效模式）和 `task-rules.md`（手动生效模式）自动生成仓库结构：
+- 自动生成标准目录结构：src、tests、docs、config等
+- 进行合法性校验，冲突或缺失时提供默认值
+- 通过通义灵码智能体解析规则文件并生成基础文件模板
+
+### 2. 测试优化阶段
+在测试过程中使用Prompt进行智能优化：
+- 使用标准化 Prompt 模板智能生成测试用例
+- 结合 AI 分析代码逻辑，提升测试覆盖率
+- 集成静态分析工具识别风险点，实现缺陷与性能测试建议
+- 采用Prompt工程化方法，结合AI生成测试用例，集成静态分析工具与CI/CD形成反馈闭环
+
+### 3. MCP 代码提交阶段
+通过MCP协议完成代码提交：
+- 遵循 Conventional Commits 规范
+- 提交信息格式：`<type>(<scope>): <subject>`
+- 支持自动生成 CHANGELOG 和关联 issue（如 Fixes #123）
+- 通过交互式CLI工具辅助生成提交信息，自动提取变更关键词并生成CHANGELOG
+
 ## 🌟 主要特性
 
 ### 🔧 核心功能
