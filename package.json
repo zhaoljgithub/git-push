@@ -13,8 +13,7 @@
     "install-service": "node install.js",
     "uninstall-service": "node install.js --uninstall",
     "build": "node build.js",
-    "pack": "npm run build && npm pack",
-    "prepublishOnly": "npm test"
+    "pack": "npm run build && npm pack"
   },
   "keywords": [
     "git",
@@ -23,7 +22,7 @@
     "code-commit",
     "ai-assistant"
   ],
-  "author": "Alibaba Cloud",
+  "author": "zhaolinjin",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
@@ -44,5 +43,9 @@
   ],
   "engines": {
     "node": ">=14.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
+
 }
