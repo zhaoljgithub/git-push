@@ -8,6 +8,7 @@ async function runAutoPushTest() {
   console.log('=== Git Push MCP 自动推送功能测试 ===\n');
   
   const app = new GitPushMCP();
+  let testFile2; // 声明变量以避免作用域问题
   
   // 创建测试文件
   const testFile = path.join(process.cwd(), 'auto-push-test.txt');
@@ -38,7 +39,7 @@ async function runAutoPushTest() {
     console.log('------------------------');
     
     // 创建另一个测试文件
-    const testFile2 = path.join(process.cwd(), 'auto-push-test2.txt');
+    testFile2 = path.join(process.cwd(), 'auto-push-test2.txt');
     fs.writeFileSync(testFile2, '这是第二个自动推送测试文件\n创建时间: ' + new Date().toISOString());
     console.log('✓ 创建第二个测试文件:', testFile2);
     
@@ -95,6 +96,7 @@ async function runAutoPushTest() {
   console.log('• 提交时自动推送：pushed = true');
   console.log('• 正确识别当前分支并推送到origin');
   console.log('• 返回明确的操作类型标识');
+  console.log('• 完善的错误处理和状态反馈');
 }
 
 // 运行测试
