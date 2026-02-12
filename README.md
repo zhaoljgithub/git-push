@@ -39,8 +39,9 @@ npm install -g git-push-mcp
 ```
 
 ### 通义灵码智能体里输入代码提交
-![alt text](image.png)
-
+![通义灵码智能体中使用git-push-mcp进行代码提交的界面示例](image.png)
+![git-push-mcp MCP服务在通义灵码中的配置界面](image-1.png)
+![使用自然语言命令提交代码的效果展示](image-2.png)
 ### 本地使用
 ```bash
 # 克隆项目
