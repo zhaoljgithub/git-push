@@ -1,142 +1,199 @@
 #!/usr/bin/env node
 
+const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
+const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio.js');
+const {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+  GetPromptRequestSchema,
+  ListPromptsRequestSchema,
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema
+} = require('@modelcontextprotocol/sdk/types.js');
+
 const { MCPHandler } = require('./lib/mcp-handler');
-const readline = require('readline');
 
-class GitPushMCP {
-  constructor() {
-    this.handler = new MCPHandler();
-    this.setupStdio();
-  }
+async function main() {
+  // 创建MCP处理器实例
+  const handler = new MCPHandler();
 
-  setupStdio() {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-      terminal: false
-    });
-
-    rl.on('line', async (line) => {
-      try {
-        const request = JSON.parse(line);
-        await this.handleRequest(request);
-      } catch (error) {
-        console.error('Error parsing request:', error);
-        this.sendError('Invalid JSON request');
+  // 创建服务器实例
+  const server = new Server(
+    {
+      name: 'git-push-mcp',
+      version: '1.0.0',
+    },
+    {
+      capabilities: {
+        tools: {},
+        prompts: {},
+        resources: {}
       }
-    });
+    }
+  );
 
-    rl.on('close', () => {
-      process.exit(0);
-    });
-  }
-
-  async handleRequest(request) {
-    const { id, method, params } = request;
-
+  // 注册工具调用处理器
+  server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    const { name, arguments: args } = request.params;
+    
     try {
       let result;
-
-      switch (method) {
-        case 'initialize':
-          result = await this.initialize(params);
+      
+      switch (name) {
+        case 'process_natural_language':
+          result = await handler.processNaturalLanguage(args.text, args.context || {});
           break;
-        case 'git_push/execute_command':
-          result = await this.executeCommand(params);
+        case 'get_git_status':
+          result = await handler.getGitStatus();
           break;
-        case 'git_push/get_status':
-          result = await this.getStatus();
+        case 'commit_changes':
+          result = await handler.commitChanges(args.message, args.files, args.stageAll);
           break;
-        case 'git_push/get_history':
-          result = await this.getHistory();
-          break;
-        case 'git_push/get_branches':
-          result = await this.getBranches();
+        case 'push_changes':
+          result = await handler.pushChanges(args.remote, args.branch);
           break;
         default:
-          throw new Error(`Method ${method} not found`);
+          throw new Error(`Unknown tool: ${name}`);
       }
 
-      this.sendResponse(id, result);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2)
+          }
+        ]
+      };
     } catch (error) {
-      this.sendError(id, error.message);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({
+              success: false,
+              error: error.message,
+              service: 'git-push-mcp'
+            }, null, 2)
+          }
+        ]
+      };
     }
-  }
+  });
 
-  async initialize(params) {
+  // 注册工具列表处理器
+  server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      protocolVersion: '1.0.0',
-      capabilities: {
-        tools: {
-          list: true,
-          call: true
+      tools: [
+        {
+          name: 'process_natural_language',
+          description: '处理自然语言Git命令，如"提交所有更改"、"推送代码"等',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              text: {
+                type: 'string',
+                description: '自然语言Git命令，如"提交所有更改"、"查看状态"等'
+              },
+              context: {
+                type: 'object',
+                description: '执行上下文配置',
+                properties: {
+                  autoStage: {
+                    type: 'boolean',
+                    description: '是否自动添加文件到暂存区',
+                    default: true
+                  },
+                  autoPush: {
+                    type: 'boolean',
+                    description: '是否自动推送到远程仓库',
+                    default: false
+                  },
+                  conventionalCommits: {
+                    type: 'boolean',
+                    description: '是否使用约定式提交格式',
+                    default: true
+                  }
+                }
+              }
+            },
+            required: ['text']
+          }
+        },
+        {
+          name: 'get_git_status',
+          description: '获取Git仓库状态信息',
+          inputSchema: {
+            type: 'object',
+            properties: {}
+          }
+        },
+        {
+          name: 'commit_changes',
+          description: '提交Git更改',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              message: {
+                type: 'string',
+                description: '提交消息'
+              },
+              files: {
+                type: 'array',
+                items: {
+                  type: 'string'
+                },
+                description: '要提交的文件列表'
+              },
+              stageAll: {
+                type: 'boolean',
+                description: '是否添加所有更改的文件',
+                default: true
+              }
+            },
+            required: ['message']
+          }
+        },
+        {
+          name: 'push_changes',
+          description: '推送到远程仓库',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              remote: {
+                type: 'string',
+                description: '远程仓库名称',
+                default: 'origin'
+              },
+              branch: {
+                type: 'string',
+                description: '要推送的分支名称'
+              }
+            }
+          }
         }
-      },
-      serverInfo: {
-        name: 'git-push-mcp',
-        version: '1.0.0'
-      }
+      ]
     };
-  }
+  });
 
-  async executeCommand(params) {
-    const { command } = params;
-    const result = await this.handler.processCommand(command);
-    return {
-      success: result.success,
-      message: result.message,
-      details: result.details || null
-    };
-  }
+  // 注册资源和提示处理器（暂不实现）
+  server.setRequestHandler(ListResourcesRequestSchema, async () => ({ resources: [] }));
+  server.setRequestHandler(ReadResourceRequestSchema, async () => ({ contents: [] }));
+  server.setRequestHandler(ListPromptsRequestSchema, async () => ({ prompts: [] }));
+  server.setRequestHandler(GetPromptRequestSchema, async () => ({ messages: [] }));
 
-  async getStatus() {
-    const result = await this.handler.processCommand('查看状态');
-    return {
-      status: result.message,
-      hasChanges: result.success
-    };
-  }
-
-  async getHistory() {
-    const result = await this.handler.processCommand('查看提交历史');
-    return {
-      history: result.message
-    };
-  }
-
-  async getBranches() {
-    const result = await this.handler.processCommand('查看分支');
-    return {
-      branches: result.message,
-      current: 'master' // 可以根据实际情况动态获取
-    };
-  }
-
-  sendResponse(id, result) {
-    const response = {
-      jsonrpc: '2.0',
-      id,
-      result
-    };
-    console.log(JSON.stringify(response));
-  }
-
-  sendError(id, error) {
-    const response = {
-      jsonrpc: '2.0',
-      id,
-      error: {
-        code: -32603,
-        message: error
-      }
-    };
-    console.log(JSON.stringify(response));
+  try {
+    // 设置传输层并连接
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    
+    console.error('Git Push MCP Server running on stdio');
+  } catch (error) {
+    console.error('Server connection error:', error);
+    process.exit(1);
   }
 }
 
-// 启动MCP服务器
-if (require.main === module) {
-  new GitPushMCP();
-}
-
-module.exports = { GitPushMCP };
+main().catch((error) => {
+  console.error('Server startup error:', error);
+  process.exit(1);
+});

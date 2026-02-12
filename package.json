@@ -26,6 +26,7 @@
   "author": "Alibaba Cloud",
   "license": "MIT",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
     "dotenv": "^16.0.3",
     "simple-git": "^3.19.1",
     "winston": "^3.8.2"
@@ -36,6 +37,7 @@
   "files": [
     "index.js",
     "mcp-server.js",
+    "mcp.json",
     "lib/",
     ".env.example",
     "README.md"
