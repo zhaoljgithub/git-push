@@ -23,6 +23,7 @@
 - 提交信息格式：`<type>(<scope>): <subject>`
 - 支持自动生成 CHANGELOG 和关联 issue（如 Fixes #123）
 - 通过交互式CLI工具辅助生成提交信息，自动提取变更关键词并生成CHANGELOG
+- 最终以npm包形式发布到npm上
 
 ## 🌟 主要特性
 
